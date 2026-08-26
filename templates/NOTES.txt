@@ -1,0 +1,16 @@
+fli-proxysql đã được cài đặt.
+
+CORE ({{ .Values.core.replicaCount }} pod, StatefulSet "{{ .Values.core.name }}"):
+  Pod:     {{ .Values.core.name }}-0 .. {{ .Values.core.name }}-{{ sub .Values.core.replicaCount 1 }}
+  Service: {{ .Values.core.name }} (rw:{{ .Values.core.service.ports.rw }} ro:{{ .Values.core.service.ports.ro }} admin:{{ .Values.core.service.ports.admin }})
+
+SATELLITE (kind: {{ .Values.satellite.kind }}):
+{{- range $env := .Values.satellite.environments }}
+  - Env "{{ $env.name }}"
+      Workload: proxysql-satellite-{{ $env.name }} ({{ $.Values.satellite.kind }})
+      Service:  proxysql-satellite-{{ $env.name }}
+{{- end }}
+
+Kiểm tra:
+  kubectl get sts,ds,svc,pdb -l app=proxysql
+  kubectl get pods -l app=proxysql -o wide

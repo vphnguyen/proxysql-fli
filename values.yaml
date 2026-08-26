@@ -1,0 +1,147 @@
+# =============================================================================
+# fli-proxysql values.yaml
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# CORE: StatefulSet "proxysql-core" -> pod proxysql-core-0, proxysql-core-1, ...
+# Bắt buộc mỗi pod nằm trên 1 node riêng (hard pod anti-affinity), tối thiểu 3 pod/3 node.
+# -----------------------------------------------------------------------------
+core:
+  name: proxysql-core
+  replicaCount: 3          # >= 3, mỗi pod sẽ được scheduler ép lên 1 node khác nhau
+  podManagementPolicy: Parallel
+
+  image:
+    repository: proxysql/proxysql
+    tag: "2.5.5"
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    ports:
+      rw: 3306
+      ro: 3307
+      admin: 6032
+    nodePorts:            # chỉ áp dụng nếu service.type = NodePort
+      rw: ""
+      ro: ""
+      admin: ""
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 2Gi
+    storageClass: ""       # để trống dùng storageClass mặc định của cluster
+
+  nodeSelector: {}
+  tolerations: []
+  nodeAffinity: {}          # có thể set thêm preferred/required nodeAffinity nếu cần
+  serviceAccountName: ""
+  terminationGracePeriodSeconds: 30
+  podAnnotations: {}
+
+  # Nội dung /etc/proxysql.cnf tuỳ chỉnh (để trống = dùng config mặc định của image)
+  config: ""
+
+  livenessProbe: {}
+  # ví dụ:
+  # livenessProbe:
+  #   tcpSocket:
+  #     port: 6032
+  #   initialDelaySeconds: 10
+  #   periodSeconds: 10
+
+  readinessProbe: {}
+
+  # PodDisruptionBudget đảm bảo không mất quá nhiều pod cùng lúc khi drain node
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 2
+
+# -----------------------------------------------------------------------------
+# SATELLITE: mỗi phần tử trong `environments` sinh ra 1 workload (STS hoặc DS)
+# tên "proxysql-satellite-<env.name>" + 1 Service riêng "proxysql-satellite-<env.name>"
+# -----------------------------------------------------------------------------
+satellite:
+  # kind: "StatefulSet" hoặc "DaemonSet"
+  # - StatefulSet: chạy số lượng pod cố định theo replicaCount, có PVC riêng từng pod
+  # - DaemonSet:   chạy 1 pod / node (theo nodeSelector/tolerations), không dùng replicaCount
+  kind: StatefulSet
+
+  environments:
+    - name: staging
+      replicaCount: 2        # chỉ dùng khi kind=StatefulSet
+      image:
+        repository: proxysql/proxysql
+        tag: "2.5.5"
+        pullPolicy: IfNotPresent
+      service:
+        type: ClusterIP
+        ports:
+          rw: 3306
+          ro: 3307
+          admin: 6032
+        nodePorts:
+          rw: ""
+          ro: ""
+          admin: ""
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      persistence:            # chỉ dùng khi kind=StatefulSet
+        enabled: false
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: ""
+      nodeSelector: {}
+      tolerations: []
+      hostPath: ""             # chỉ dùng khi kind=DaemonSet và muốn ghi data ra host
+      config: ""
+
+    - name: production
+      replicaCount: 3
+      image:
+        repository: proxysql/proxysql
+        tag: "2.5.5"
+        pullPolicy: IfNotPresent
+      service:
+        type: ClusterIP
+        ports:
+          rw: 3308
+          ro: 3307
+          admin: 6032
+        nodePorts:
+          rw: ""
+          ro: ""
+          admin: ""
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+      persistence:
+        enabled: false
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: ""
+      nodeSelector: {}
+      tolerations: []
+      hostPath: ""
+      config: ""
+
+
+

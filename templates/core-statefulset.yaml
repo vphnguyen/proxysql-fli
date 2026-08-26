@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.core.name }}
+  labels:
+    app: proxysql
+    component: core
+    {{- include "fli-proxysql.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ .Values.core.name }}-headless
+  replicas: {{ .Values.core.replicaCount }}
+  podManagementPolicy: {{ .Values.core.podManagementPolicy | default "Parallel" }}
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: proxysql
+      component: core
+  template:
+    metadata:
+      labels:
+        app: proxysql
+        component: core
+      {{- if .Values.core.podAnnotations }}
+      annotations:
+        {{- toYaml .Values.core.podAnnotations | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.core.serviceAccountName }}
+      serviceAccountName: {{ .Values.core.serviceAccountName }}
+      {{- end }}
+      affinity:
+        # Bắt buộc (hard) không cho 2 pod core nằm chung 1 node
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app: proxysql
+                  component: core
+        {{- if .Values.core.nodeAffinity }}
+        nodeAffinity:
+          {{- toYaml .Values.core.nodeAffinity | nindent 10 }}
+        {{- end }}
+      {{- if .Values.core.tolerations }}
+      tolerations:
+        {{- toYaml .Values.core.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.core.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.core.nodeSelector | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.core.terminationGracePeriodSeconds | default 30 }}
+      containers:
+        - name: proxysql
+          image: "{{ .Values.core.image.repository }}:{{ .Values.core.image.tag }}"
+          imagePullPolicy: {{ .Values.core.image.pullPolicy }}
+          ports:
+            - name: proxysql-rw
+              containerPort: {{ .Values.core.service.ports.rw }}
+            - name: proxysql-ro
+              containerPort: {{ .Values.core.service.ports.ro }}
+            - name: proxysql-admin
+              containerPort: {{ .Values.core.service.ports.admin }}
+          {{- if .Values.core.resources }}
+          resources:
+            {{- toYaml .Values.core.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/proxysql
+            {{- if .Values.core.config }}
+            - name: config
+              mountPath: /etc/proxysql.cnf
+              subPath: proxysql.cnf
+            {{- end }}
+          {{- if .Values.core.livenessProbe }}
+          livenessProbe:
+            {{- toYaml .Values.core.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.core.readinessProbe }}
+          readinessProbe:
+            {{- toYaml .Values.core.readinessProbe | nindent 12 }}
+          {{- end }}
+      {{- if or .Values.core.config (not .Values.core.persistence.enabled) }}
+      volumes:
+        {{- if .Values.core.config }}
+        - name: config
+          configMap:
+            name: {{ .Values.core.name }}-config
+        {{- end }}
+        {{- if not .Values.core.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+        {{- end }}
+      {{- end }}
+  {{- if .Values.core.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "{{ .Values.core.persistence.accessMode | default "ReadWriteOnce" }}" ]
+        {{- if .Values.core.persistence.storageClass }}
+        storageClassName: {{ .Values.core.persistence.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.core.persistence.size }}
+  {{- end }}
+
