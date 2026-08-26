@@ -1,0 +1,13 @@
+{{- if .Values.core.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.core.name }}-config
+  labels:
+    app: proxysql
+    component: core
+    {{- include "fli-proxysql.labels" . | nindent 4 }}
+data:
+  proxysql.cnf: |
+{{ .Values.core.config | indent 4 }}
+{{- end }}

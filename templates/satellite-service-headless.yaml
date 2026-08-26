@@ -1,0 +1,34 @@
+{{- if eq .Values.satellite.kind "StatefulSet" }}
+{{- range $env := .Values.satellite.environments }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxysql-satellite-{{ $env.name }}-headless
+  labels:
+    app: proxysql
+    component: satellite
+    environment: {{ $env.name }}
+    {{- include "fli-proxysql.labels" $ | nindent 4 }}
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: proxysql-rw
+      port: {{ $env.service.ports.rw }}
+      targetPort: {{ $env.service.ports.rw }}
+      protocol: TCP
+    - name: proxysql-ro
+      port: {{ $env.service.ports.ro }}
+      targetPort: {{ $env.service.ports.ro }}
+      protocol: TCP
+    - name: proxysql-admin
+      port: {{ $env.service.ports.admin }}
+      targetPort: {{ $env.service.ports.admin }}
+      protocol: TCP
+  selector:
+    app: proxysql
+    component: satellite
+    environment: {{ $env.name }}
+{{- end }}
+{{- end }}

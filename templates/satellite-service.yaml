@@ -1,0 +1,40 @@
+{{- range $env := .Values.satellite.environments }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxysql-satellite-{{ $env.name }}
+  labels:
+    app: proxysql
+    component: satellite
+    environment: {{ $env.name }}
+    {{- include "fli-proxysql.labels" $ | nindent 4 }}
+spec:
+  type: {{ $env.service.type | default "ClusterIP" }}
+  ports:
+    - name: proxysql-rw
+      {{- if $env.service.nodePorts.rw }}
+      nodePort: {{ $env.service.nodePorts.rw }}
+      {{- end }}
+      port: {{ $env.service.ports.rw }}
+      protocol: TCP
+      targetPort: {{ $env.service.ports.rw }}
+    - name: proxysql-ro
+      {{- if $env.service.nodePorts.ro }}
+      nodePort: {{ $env.service.nodePorts.ro }}
+      {{- end }}
+      port: {{ $env.service.ports.ro }}
+      protocol: TCP
+      targetPort: {{ $env.service.ports.ro }}
+    - name: proxysql-admin
+      {{- if $env.service.nodePorts.admin }}
+      nodePort: {{ $env.service.nodePorts.admin }}
+      {{- end }}
+      port: {{ $env.service.ports.admin }}
+      protocol: TCP
+      targetPort: {{ $env.service.ports.admin }}
+  selector:
+    app: proxysql
+    component: satellite
+    environment: {{ $env.name }}
+{{- end }}

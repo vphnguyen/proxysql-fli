@@ -107,4 +107,3 @@ spec:
           requests:
             storage: {{ .Values.core.persistence.size }}
   {{- end }}
-

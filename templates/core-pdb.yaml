@@ -1,0 +1,16 @@
+{{- if .Values.core.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Values.core.name }}-pdb
+  labels:
+    app: proxysql
+    component: core
+    {{- include "fli-proxysql.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.core.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      app: proxysql
+      component: core
+{{- end }}

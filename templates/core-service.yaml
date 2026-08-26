@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.core.name }}
+  labels:
+    app: proxysql
+    component: core
+    {{- include "fli-proxysql.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.core.service.type }}
+  ports:
+    - name: proxysql-rw
+      {{- if .Values.core.service.nodePorts.rw }}
+      nodePort: {{ .Values.core.service.nodePorts.rw }}
+      {{- end }}
+      port: {{ .Values.core.service.ports.rw }}
+      protocol: TCP
+      targetPort: {{ .Values.core.service.ports.rw }}
+    - name: proxysql-ro
+      {{- if .Values.core.service.nodePorts.ro }}
+      nodePort: {{ .Values.core.service.nodePorts.ro }}
+      {{- end }}
+      port: {{ .Values.core.service.ports.ro }}
+      protocol: TCP
+      targetPort: {{ .Values.core.service.ports.ro }}
+    - name: proxysql-admin
+      {{- if .Values.core.service.nodePorts.admin }}
+      nodePort: {{ .Values.core.service.nodePorts.admin }}
+      {{- end }}
+      port: {{ .Values.core.service.ports.admin }}
+      protocol: TCP
+      targetPort: {{ .Values.core.service.ports.admin }}
+  selector:
+    app: proxysql
+    component: core

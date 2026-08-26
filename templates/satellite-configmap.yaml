@@ -1,0 +1,17 @@
+{{- range $env := .Values.satellite.environments }}
+{{- if $env.config }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxysql-satellite-{{ $env.name }}-config
+  labels:
+    app: proxysql
+    component: satellite
+    environment: {{ $env.name }}
+    {{- include "fli-proxysql.labels" $ | nindent 4 }}
+data:
+  proxysql.cnf: |
+{{ $env.config | indent 4 }}
+{{- end }}
+{{- end }}

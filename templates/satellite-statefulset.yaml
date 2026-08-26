@@ -1,0 +1,88 @@
+{{- if eq .Values.satellite.kind "StatefulSet" }}
+{{- range $env := .Values.satellite.environments }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: proxysql-satellite-{{ $env.name }}
+  labels:
+    app: proxysql
+    component: satellite
+    environment: {{ $env.name }}
+    {{- include "fli-proxysql.labels" $ | nindent 4 }}
+spec:
+  serviceName: proxysql-satellite-{{ $env.name }}-headless
+  replicas: {{ $env.replicaCount }}
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: proxysql
+      component: satellite
+      environment: {{ $env.name }}
+  template:
+    metadata:
+      labels:
+        app: proxysql
+        component: satellite
+        environment: {{ $env.name }}
+    spec:
+      {{- if $env.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $env.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if $env.tolerations }}
+      tolerations:
+        {{- toYaml $env.tolerations | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: proxysql
+          image: "{{ $env.image.repository }}:{{ $env.image.tag }}"
+          imagePullPolicy: {{ $env.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - name: proxysql-rw
+              containerPort: {{ $env.service.ports.rw }}
+            - name: proxysql-ro
+              containerPort: {{ $env.service.ports.ro }}
+            - name: proxysql-admin
+              containerPort: {{ $env.service.ports.admin }}
+          {{- if $env.resources }}
+          resources:
+            {{- toYaml $env.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/proxysql
+            {{- if $env.config }}
+            - name: config
+              mountPath: /etc/proxysql.cnf
+              subPath: proxysql.cnf
+            {{- end }}
+      {{- if or $env.config (not $env.persistence.enabled) }}
+      volumes:
+        {{- if $env.config }}
+        - name: config
+          configMap:
+            name: proxysql-satellite-{{ $env.name }}-config
+        {{- end }}
+        {{- if not $env.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+        {{- end }}
+      {{- end }}
+  {{- if $env.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "{{ $env.persistence.accessMode | default "ReadWriteOnce" }}" ]
+        {{- if $env.persistence.storageClass }}
+        storageClassName: {{ $env.persistence.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ $env.persistence.size }}
+  {{- end }}
+{{- end }}
+{{- end }}
