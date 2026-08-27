@@ -36,7 +36,7 @@ core:
     limits:
       cpu: "1"
       memory: 1Gi
-
+  
   persistence:
     enabled: true
     accessMode: ReadWriteOnce
@@ -51,7 +51,67 @@ core:
   podAnnotations: {}
 
   # Nội dung /etc/proxysql.cnf tuỳ chỉnh (để trống = dùng config mặc định của image)
-  config: ""
+  config: |
+      admin_variables=
+    {
+        admin_credentials="admin:adminFliPa55w0rd;cluster_fli_b2b:secret_fli_b2b"
+        mysql_ifaces="0.0.0.0:6032"
+        refresh_interval=2000
+        cluster_username="cluster_fli_b2b"
+        cluster_password="secret_fli_b2b"
+    }
+    mysql_variables=
+    {
+        threads=4
+        max_connections=2048
+        default_query_delay=0
+        default_query_timeout=36000000
+        have_compress=true
+        poll_timeout=2000
+        interfaces="0.0.0.0:3306;0.0.0.0:3307/tmp/proxysql.sock"
+        default_schema="information_schema"
+        stacksize=1048576
+        server_version="8.0.23"
+        connect_timeout_server=3000
+        monitor_username="proxy_monitor"
+        monitor_password="Proxymonitor"
+        monitor_history=600000
+        monitor_connect_interval=60000
+        monitor_ping_interval=10000
+        monitor_read_only_interval=1500
+        monitor_read_only_timeout=500
+        ping_interval_server_msec=120000
+        ping_timeout_server=500
+        commands_stats=true
+        sessions_sort=true
+        connect_retries_on_failure=10
+    }
+    mysql_servers =
+    (
+      { address="mysql1" , port=3306 , hostgroup=10, max_connections=100 },      
+    )
+    mysql_users =
+    (
+      { username = "myuser", password = "password", default_hostgroup = 10, active = 1 }
+    )
+    mysql_query_rules:
+    (
+          {
+                  rule_id=1
+                  active=1
+                  proxy_port=3306
+                  destination_hostgroup=0
+                  apply=1
+          },
+          {
+                  rule_id=2
+                  active=1
+                  proxy_port=3307
+                  destination_hostgroup=1
+                  apply=1
+          }
+    )
+
 
   livenessProbe: {}
   # ví dụ:
