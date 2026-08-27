@@ -74,8 +74,9 @@ core:
 satellite:
 
   environments:
-    - name: staging
+    - name: uat
       kind: StatefulSet
+      headlessService: false
       replicaCount: 2        # chỉ dùng khi kind=StatefulSet
       image:
         repository: proxysql/proxysql
