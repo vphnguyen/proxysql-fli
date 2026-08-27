@@ -212,5 +212,5 @@ lab:
   enabled: true
   rootPassword: "rootpassword"
   host: "uat-proxysql"
-  port: "3306"      
+  port: 3306     
   cliReplicas: 3
