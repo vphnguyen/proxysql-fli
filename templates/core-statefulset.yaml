@@ -7,7 +7,7 @@ metadata:
     component: core
     {{- include "fli-proxysql.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ .Values.core.name }}-headless
+  serviceName: {{ .Values.core.name }}
   replicas: {{ .Values.core.replicaCount }}
   podManagementPolicy: {{ .Values.core.podManagementPolicy | default "Parallel" }}
   updateStrategy:
