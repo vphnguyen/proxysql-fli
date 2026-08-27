@@ -18,7 +18,6 @@ spec:
       port: {{ .Values.core.service.ports.rw }}
       protocol: TCP
       targetPort: {{ .Values.core.service.ports.rw }}
-
     - name: proxysql-ro
       {{- if .Values.core.service.nodePorts.ro }}
       nodePort: {{ .Values.core.service.nodePorts.ro }}
@@ -26,7 +25,6 @@ spec:
       port: {{ .Values.core.service.ports.ro }}
       protocol: TCP
       targetPort: {{ .Values.core.service.ports.ro }}
-    
     - name: proxysql-admin
       {{- if .Values.core.service.nodePorts.admin }}
       nodePort: {{ .Values.core.service.nodePorts.admin }}
