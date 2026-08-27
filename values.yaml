@@ -246,6 +246,6 @@ lab:
   enabled: true
   rootPassword: "rootpassword"
   #host: "fli-proxysql-mysqllab-service"
-  host: "uat-proxysql"
+  host: "proxysql-core"
   port: 3306     
   cliReplicas: 3

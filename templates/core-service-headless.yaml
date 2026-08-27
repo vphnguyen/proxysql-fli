@@ -12,10 +12,10 @@ spec:
   clusterIP: None
   publishNotReadyAddresses: true
   ports:
-    # - name: proxysql-rw
-    #   port: {{ .Values.core.service.ports.rw }}
-    #   targetPort: {{ .Values.core.service.ports.rw }}
-    #   protocol: TCP
+    - name: proxysql-rw
+      port: {{ .Values.core.service.ports.rw }}
+      targetPort: {{ .Values.core.service.ports.rw }}
+      protocol: TCP
     # - name: proxysql-ro
     #   port: {{ .Values.core.service.ports.ro }}
     #   targetPort: {{ .Values.core.service.ports.ro }}
