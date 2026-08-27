@@ -94,7 +94,8 @@ core:
     )
     mysql_users =
     (
-      { username = "root", password = "rootpassword", default_hostgroup = 1, active = 1 }
+      { username = "root", password = "rootpassword", default_hostgroup = 1, active = 1 },
+      { username = "tester", password = "abcdefgh", default_hostgroup = 1, active = 1 }
     )
     mysql_query_rules:
     (
