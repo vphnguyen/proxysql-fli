@@ -128,7 +128,7 @@ core:
   # PodDisruptionBudget đảm bảo không mất quá nhiều pod cùng lúc khi drain node
   podDisruptionBudget:
     enabled: true
-    minAvailable: 2
+    minAvailable: 1
 
 # -----------------------------------------------------------------------------
 # SATELLITE: mỗi phần tử trong `environments` sinh ra 1 workload (STS hoặc DS)
