@@ -18,6 +18,7 @@ core:
     pullPolicy: IfNotPresent
 
   service:
+    normalService: disabled   # nếu enabled = true thì sinh ra 1 Service bình thường (ClusterIP/NodePort/LoadBalancer)
     type: ClusterIP
     ports:
       rw: 3306
@@ -94,11 +95,11 @@ satellite:
           admin: ""
       resources:
         requests:
-          cpu: 100m
-          memory: 128Mi
+          cpu: 1
+          memory: 1Gi
         limits:
-          cpu: 500m
-          memory: 512Mi
+          cpu: 4
+          memory: 5Gi
       persistence:            # chỉ dùng khi kind=StatefulSet
         enabled: false
         accessMode: ReadWriteOnce
@@ -111,7 +112,7 @@ satellite:
 
     - name: production
       kind: DaemonSet     
-      replicaCount: 3
+      #replicaCount: 3
       image:
         repository: proxysql/proxysql
         tag: "2.5.5"

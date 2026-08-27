@@ -1,3 +1,8 @@
+
+{{- if and (eq $env.kind "StatefulSet") (not $env.headlessService) }} # Giải thích: nếu kind=StatefulSet và headlessService=false thì sinh ra 1 Service riêng cho mỗi environment
+{{- if eq $env.kind "StatefulSet" }} # Nếu kind=StatefulSet thì sinh ra 1 StatefulSet riêng cho mỗi environment
+
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -10,14 +15,14 @@ spec:
   clusterIP: None
   publishNotReadyAddresses: true
   ports:
-    - name: proxysql-rw
-      port: {{ .Values.core.service.ports.rw }}
-      targetPort: {{ .Values.core.service.ports.rw }}
-      protocol: TCP
-    - name: proxysql-ro
-      port: {{ .Values.core.service.ports.ro }}
-      targetPort: {{ .Values.core.service.ports.ro }}
-      protocol: TCP
+    # - name: proxysql-rw
+    #   port: {{ .Values.core.service.ports.rw }}
+    #   targetPort: {{ .Values.core.service.ports.rw }}
+    #   protocol: TCP
+    # - name: proxysql-ro
+    #   port: {{ .Values.core.service.ports.ro }}
+    #   targetPort: {{ .Values.core.service.ports.ro }}
+    #   protocol: TCP
     - name: proxysql-admin
       port: {{ .Values.core.service.ports.admin }}
       targetPort: {{ .Values.core.service.ports.admin }}
