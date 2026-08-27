@@ -1,9 +1,9 @@
-{{- if   eq .Values.core.headlessService "enabled"   }} # Giải thích: Nếu core.headlessService được bật, thì sẽ tạo ra một Service headless cho core.
+{{- if eq .Values.core.service.headlessService "enabled" }}  # Giải thích: Nếu core.headlessService được bật, thì sẽ tạo ra một Service headless cho core.
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.core.name }}-headless
+  name: {{ .Values.core.name }}
   labels:
     app: proxysql
     component: core

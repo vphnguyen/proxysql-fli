@@ -1,9 +1,9 @@
-{{- if eq .Values.core.service.normalService "enabled" }}
+{{- if eq .Values.core.service.headlessService "disabled" }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.core.name }}
+  name: {{ .Values.core.name }}-2
   labels:
     app: proxysql
     component: core

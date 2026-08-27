@@ -18,7 +18,7 @@ core:
     pullPolicy: IfNotPresent
 
   service:
-    normalService: disabled   # nếu enabled = true thì sinh ra 1 Service bình thường (ClusterIP/NodePort/LoadBalancer)
+    headlessService: enabled   # nếu enabled = true thì sinh ra 1 Service bình thường (ClusterIP/NodePort/LoadBalancer)
     type: ClusterIP
     ports:
       rw: 3306
