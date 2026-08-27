@@ -170,7 +170,41 @@ satellite:
       nodeSelector: {}
       tolerations: []
       hostPath: ""             # chỉ dùng khi kind=DaemonSet và muốn ghi data ra host
-      config: ""
+      config: |
+        admin_variables=
+        {
+            admin_credentials="admin:adminFliPa55w0rd;cluster_fli_b2b:secret_fli_b2b"
+            mysql_ifaces="0.0.0.0:6032"
+            refresh_interval=2000
+            cluster_username="cluster_fli_b2b"
+            cluster_password="secret_fli_b2b"
+        }
+        mysql_variables=
+        {
+            threads=4
+            max_connections=2048
+            default_query_delay=0
+            default_query_timeout=36000000
+            have_compress=true
+            poll_timeout=2000
+            interfaces="0.0.0.0:3306;0.0.0.0:3307/tmp/proxysql.sock"
+            default_schema="information_schema"
+            stacksize=1048576
+            server_version="8.0.23"
+            connect_timeout_server=3000
+            monitor_username="proxy_monitor"
+            monitor_password="Proxymonitor"
+            monitor_history=600000
+            monitor_connect_interval=60000
+            monitor_ping_interval=10000
+            monitor_read_only_interval=1500
+            monitor_read_only_timeout=500
+            ping_interval_server_msec=120000
+            ping_timeout_server=500
+            commands_stats=true
+            sessions_sort=true
+            connect_retries_on_failure=10
+        }
 
     - name: production
       kind: DaemonSet     
