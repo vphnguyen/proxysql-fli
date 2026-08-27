@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: proxysql-satellite-{{ $env.name }}
+  name: {{ $env.name }}-proxysql
   labels:
     app: proxysql
     component: satellite

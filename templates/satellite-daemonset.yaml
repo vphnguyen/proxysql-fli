@@ -1,5 +1,5 @@
-{{- if eq .Values.satellite.kind "DaemonSet" }}
 {{- range $env := .Values.satellite.environments }}
+{{- if eq $env.kind "DaemonSet" }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet

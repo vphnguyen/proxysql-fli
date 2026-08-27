@@ -7,10 +7,11 @@
 # Bắt buộc mỗi pod nằm trên 1 node riêng (hard pod anti-affinity), tối thiểu 3 pod/3 node.
 # -----------------------------------------------------------------------------
 core:
+
   name: proxysql-core
   replicaCount: 3          # >= 3, mỗi pod sẽ được scheduler ép lên 1 node khác nhau
   podManagementPolicy: Parallel
-
+  
   image:
     repository: proxysql/proxysql
     tag: "2.5.5"
@@ -71,13 +72,10 @@ core:
 # tên "proxysql-satellite-<env.name>" + 1 Service riêng "proxysql-satellite-<env.name>"
 # -----------------------------------------------------------------------------
 satellite:
-  # kind: "StatefulSet" hoặc "DaemonSet"
-  # - StatefulSet: chạy số lượng pod cố định theo replicaCount, có PVC riêng từng pod
-  # - DaemonSet:   chạy 1 pod / node (theo nodeSelector/tolerations), không dùng replicaCount
-  kind: StatefulSet
 
   environments:
     - name: staging
+      kind: StatefulSet
       replicaCount: 2        # chỉ dùng khi kind=StatefulSet
       image:
         repository: proxysql/proxysql
@@ -111,6 +109,7 @@ satellite:
       config: ""
 
     - name: production
+      kind: DaemonSet     
       replicaCount: 3
       image:
         repository: proxysql/proxysql
