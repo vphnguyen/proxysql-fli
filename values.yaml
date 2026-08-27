@@ -211,6 +211,6 @@ satellite:
 lab: 
   enabled: true
   rootPassword: "rootpassword"
-  host: "fli-proxysql-mysql-lab-service"
+  host: "fli-proxysql-mysqllab-service"
   port: 3306     
   cliReplicas: 3
