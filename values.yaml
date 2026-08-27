@@ -6,8 +6,10 @@
 # CORE: StatefulSet "proxysql-core" -> pod proxysql-core-0, proxysql-core-1, ...
 # Bắt buộc mỗi pod nằm trên 1 node riêng (hard pod anti-affinity), tối thiểu 3 pod/3 node.
 # -----------------------------------------------------------------------------
-core:
 
+
+
+core:
   name: proxysql-core
   replicaCount: 3          # >= 3, mỗi pod sẽ được scheduler ép lên 1 node khác nhau
   podManagementPolicy: Parallel
@@ -205,4 +207,6 @@ satellite:
       config: ""
 
 
-
+# ==== test 
+lab: 
+  enabled: true

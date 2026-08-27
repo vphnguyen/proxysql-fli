@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-mysql
+  labels:
+    app: mysql
+    component: test
+spec:
+  containers:
+    - name: mysql
+      image: mysql:8.0
+      ports:
+        - containerPort: 3306
+          name: mysql
+
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "rootpassword"
+
+      command:
+        - /bin/bash
+        - -c
+        - |
+          set -e
+
+          echo "Starting MySQL..."
+
+          docker-entrypoint.sh mysqld &
+          MYSQL_PID=$!
+
+          echo "Waiting for MySQL to be ready..."
+
+          until mysqladmin ping \
+            -h 127.0.0.1 \
+            -uroot \
+            -prootpassword \
+            --silent; do
+            sleep 2
+          done
+
+          echo "MySQL is ready"
+
+          mysql -uroot -prootpassword <<'EOF'
+
+          CREATE DATABASE IF NOT EXISTS testdb;
+
+          USE testdb;
+
+          CREATE TABLE IF NOT EXISTS test_table (
+              id INT AUTO_INCREMENT PRIMARY KEY,
+              data DATETIME NOT NULL
+          );
+
+          INSERT INTO test_table (data) VALUES
+              (NOW()),
+              (NOW()),
+              (NOW()),
+              (NOW()),
+              (NOW()),
+              (NOW()),
+              (NOW()),
+              (NOW()),
+              (NOW()),
+              (NOW());
+
+          EOF
+
+          echo "Database initialized:"
+          mysql -uroot -prootpassword -e \
+            "SELECT * FROM testdb.test_table;"
+
+          wait $MYSQL_PID
