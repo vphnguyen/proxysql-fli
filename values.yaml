@@ -210,3 +210,6 @@ satellite:
 # ==== test 
 lab: 
   enabled: true
+  rootPassword: "rootpassword"
+  host: "uat-proxysql"
+  cliReplicas: 3

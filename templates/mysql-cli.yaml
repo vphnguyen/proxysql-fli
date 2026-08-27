@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-client
+spec:
+  serviceName: {{ .Release.Name }}-client
+  replicas: {{ .Values.lab.cliReplicas | default 3 }}
+
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-client
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-client
+
+    spec:
+      containers:
+        - name: mysql-client
+          image: mysql:8.0
+
+          env:
+            - name: MYSQL_HOST
+              value: "{{ .Values.lab.host }}"
+
+            - name: MYSQL_PORT
+              value: "{{ .Values.client.port | default "3306" | quote }}"
+
+            - name: MYSQL_USER
+              value: "root"
+
+            - name: MYSQL_PASSWORD
+              value:  "{{ .Values.lab.rootPassword }}"
+
+            - name: MYSQL_DATABASE
+              value: "testdb"
+
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -u
+
+              # StatefulSet ordinal:
+              # <release>-client-0 -> ID=1
+              # <release>-client-1 -> ID=2
+              # ...
+              POD_INDEX="${HOSTNAME##*-}"
+              ID=$((POD_INDEX + 1))
+
+              echo "======================================"
+              echo "Pod      : ${HOSTNAME}"
+              echo "ID       : ${ID}"
+              echo "MySQL    : ${MYSQL_HOST}:${MYSQL_PORT}"
+              echo "Database : ${MYSQL_DATABASE}"
+              echo "======================================"
+
+              while true; do
+
+                echo
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] Updating id=${ID}"
+
+                mysql \
+                  --host="${MYSQL_HOST}" \
+                  --port="${MYSQL_PORT}" \
+                  --user="${MYSQL_USER}" \
+                  --password="${MYSQL_PASSWORD}" \
+                  --database="${MYSQL_DATABASE}" \
+                  --batch \
+                  --raw \
+                  <<SQL
+
+              BEGIN;
+
+              UPDATE test_table
+              SET data = NOW()
+              WHERE id = ${ID};
+
+              SELECT
+                  id,
+                  data
+              FROM test_table
+              WHERE id = ${ID};
+
+              COMMIT;
+
+              SQL
+
+                sleep 2
+
+              done

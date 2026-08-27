@@ -1,7 +1,9 @@
+{{- if .Values.lab.enabled }}
+---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Release.Name }}-mysql
+  name: {{ .Release.Name }}-mysql-lab
   labels:
     app: mysql
     component: test
@@ -15,7 +17,7 @@ spec:
 
       env:
         - name: MYSQL_ROOT_PASSWORD
-          value: "rootpassword"
+          value: {{ .Values.lab.rootPassword }}
 
       command:
         - /bin/bash
@@ -33,7 +35,7 @@ spec:
           until mysqladmin ping \
             -h 127.0.0.1 \
             -uroot \
-            -prootpassword \
+            -p{{ .Values.lab.rootPassword }} \
             --silent; do
             sleep 2
           done
@@ -70,3 +72,4 @@ spec:
             "SELECT * FROM testdb.test_table;"
 
           wait $MYSQL_PID
+{{ - end }}
