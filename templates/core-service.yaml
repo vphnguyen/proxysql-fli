@@ -35,5 +35,4 @@ spec:
   selector:
     app: proxysql
     component: core
-
 {{- end }}
