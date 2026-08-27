@@ -245,6 +245,7 @@ satellite:
 lab: 
   enabled: true
   rootPassword: "rootpassword"
+  cliPassword: "12345678"
   #host: "fli-proxysql-mysqllab-service"
   host: "proxysql-core"
   port: 3306     

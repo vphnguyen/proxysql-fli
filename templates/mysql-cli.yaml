@@ -31,7 +31,7 @@ spec:
               value: "tester"
 
             - name: MYSQL_PASSWORD
-              value:  {{ .Values.lab.rootPassword }}
+              value:  {{ .Values.lab.cliPassword }}
 
             - name: MYSQL_DATABASE
               value: "testdb"
