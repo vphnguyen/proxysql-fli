@@ -28,7 +28,7 @@ spec:
               value: {{ .Values.lab.port | default 3306 | quote }}
 
             - name: MYSQL_USER
-              value: "root"
+              value: "tester"
 
             - name: MYSQL_PASSWORD
               value:  {{ .Values.lab.rootPassword }}
