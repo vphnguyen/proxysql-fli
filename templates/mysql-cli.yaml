@@ -22,16 +22,16 @@ spec:
 
           env:
             - name: MYSQL_HOST
-              value: "{{ .Values.lab.host }}"
+              value: {{ .Values.lab.host }}
 
             - name: MYSQL_PORT
-              value: "{{ .Values.lab.port | default 3306 | quote }}"
+              value: {{ .Values.lab.port | default 3306 | quote }}
 
             - name: MYSQL_USER
               value: "root"
 
             - name: MYSQL_PASSWORD
-              value:  "{{ .Values.lab.rootPassword }}"
+              value:  {{ .Values.lab.rootPassword }}
 
             - name: MYSQL_DATABASE
               value: "testdb"
