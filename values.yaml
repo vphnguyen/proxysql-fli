@@ -52,7 +52,7 @@ core:
 
   # Nội dung /etc/proxysql.cnf tuỳ chỉnh (để trống = dùng config mặc định của image)
   config: |
-      admin_variables=
+    admin_variables=
     {
         admin_credentials="admin:adminFliPa55w0rd;cluster_fli_b2b:secret_fli_b2b"
         mysql_ifaces="0.0.0.0:6032"
