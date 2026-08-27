@@ -102,14 +102,14 @@ core:
                   rule_id=1
                   active=1
                   proxy_port=3306
-                  destination_hostgroup=0
+                  destination_hostgroup=1
                   apply=1
           },
           {
                   rule_id=2
                   active=1
                   proxy_port=3307
-                  destination_hostgroup=1
+                  destination_hostgroup=2
                   apply=1
           }
     )
