@@ -1,20 +1,24 @@
-{{- if .Values.core.config }}
+{{*-* if .Values.core.config }}
+
 apiVersion: v1
 kind: ConfigMap
+
 metadata:
   name: {{ .Values.core.name }}-config
   labels:
     app: proxysql
     component: core
-    {{- include "fli-proxysql.labels" . | nindent 4 }}
+    {{*-* include "fli-proxysql.labels" . | nindent 4 }}
+
 data:
   proxysql.cnf: |
 {{ .Values.core.config | indent 4 }}
-#   proxysql_servers =
-#     (
-# {{- range $i := until (int .Values.core.replicaCount) }}
-#       { hostname = "{{ $.Release.Name }}-core-{{ $i }}.{{ $.Release.Name }}-core", port = 6032, weight = 1000 }{{ if ne $i (sub (int $.Values.core.replicaCount) 1) }},{{ end }}
-# {{- end }}
-#     )
 
+    proxysql_servers =
+    (
+{{- range $i := until (int .Values.core.replicaCount) }}
+      { hostname = "{{ $.Release.Name }}-core-{{ $i }}.{{ $.Release.Name }}-core", port = 6032, weight = 1000 }{{ if ne $i (sub (int $.Values.core.replicaCount) 1) }},{{ end }}
 {{- end }}
+    )
+
+{{*-* end }}
