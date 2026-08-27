@@ -1,7 +1,4 @@
-
-{{- if and (eq $env.kind "StatefulSet") (not $env.headlessService) }} # Giải thích: nếu kind=StatefulSet và headlessService=false thì sinh ra 1 Service riêng cho mỗi environment
-{{- if eq $env.kind "StatefulSet" }} # Nếu kind=StatefulSet thì sinh ra 1 StatefulSet riêng cho mỗi environment
-
+{{- if   eq .Values.core.headlessService "enabled"   }} # Giải thích: Nếu core.headlessService được bật, thì sẽ tạo ra một Service headless cho core.
 ---
 apiVersion: v1
 kind: Service
@@ -32,4 +29,3 @@ spec:
     component: core
 
 {{- end }}
-{{- end }}    
