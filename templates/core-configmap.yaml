@@ -10,11 +10,11 @@ metadata:
 data:
   proxysql.cnf: |
 {{ .Values.core.config | indent 4 }}
-  proxysql_servers =
-    (
-{{- range $i := until (int .Values.core.replicaCount) }}
-      { hostname = "{{ $.Release.Name }}-core-{{ $i }}.{{ $.Release.Name }}-core", port = 6032, weight = 1000 }{{ if ne $i (sub (int $.Values.core.replicaCount) 1) }},{{ end }}
-{{- end }}
-    )
+#   proxysql_servers =
+#     (
+# {{- range $i := until (int .Values.core.replicaCount) }}
+#       { hostname = "{{ $.Release.Name }}-core-{{ $i }}.{{ $.Release.Name }}-core", port = 6032, weight = 1000 }{{ if ne $i (sub (int $.Values.core.replicaCount) 1) }},{{ end }}
+# {{- end }}
+#     )
 
 {{- end }}
