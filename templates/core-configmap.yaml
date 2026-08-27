@@ -1,4 +1,4 @@
-{{*-* if .Values.core.config }}
+{{- if .Values.core.config }}
 
 apiVersion: v1
 kind: ConfigMap
@@ -8,7 +8,7 @@ metadata:
   labels:
     app: proxysql
     component: core
-    {{*-* include "fli-proxysql.labels" . | nindent 4 }}
+    {{- include "fli-proxysql.labels" . | nindent 4 }}
 
 data:
   proxysql.cnf: |
@@ -21,4 +21,4 @@ data:
 {{- end }}
     )
 
-{{*-* end }}
+{{- end }}
