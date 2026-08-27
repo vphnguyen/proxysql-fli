@@ -16,7 +16,7 @@ core:
   
   image:
     repository: proxysql/proxysql
-    tag: "3.0.0"
+    tag: "3.0.11-debian"
     pullPolicy: IfNotPresent
 
   service:
@@ -144,7 +144,7 @@ satellite:
       replicaCount: 2        # chỉ dùng khi kind=StatefulSet
       image:
         repository: proxysql/proxysql
-        tag: "3.0.0"
+        tag: "3.0.11-debian"
         pullPolicy: IfNotPresent
       service:
         type: ClusterIP
@@ -212,7 +212,7 @@ satellite:
       #replicaCount: 3
       image:
         repository: proxysql/proxysql
-        tag: "3.0.0"
+        tag: "3.0.11-debian"
         pullPolicy: IfNotPresent
       service:
         type: ClusterIP
