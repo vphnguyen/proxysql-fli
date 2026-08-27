@@ -1,6 +1,24 @@
 {{- if .Values.lab.enabled }}
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-service
+  labels:
+    app: mysql
+    component: test
+spec:
+  type: {{ .Values.core.service.type }}
+  ports:
+    - name: mysql 
+      port: 3306
+      protocol: TCP
+      targetPort: 3306
+  selector:
+    app: mysql
+    component: test
+---
+apiVersion: v1
 kind: Pod
 metadata:
   name: {{ .Release.Name }}-mysql-lab
@@ -72,5 +90,5 @@ spec:
             "SELECT * FROM testdb.test_table;"
 
           wait $MYSQL_PID
-          
+
 {{- end }}
