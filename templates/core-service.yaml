@@ -1,4 +1,4 @@
-{{- if eq .Values.core.service.normalService "enabled" }}
+{{- if eq .Values.core.service.normalService "enabled" -}}
 ---
 apiVersion: v1
 kind: Service
