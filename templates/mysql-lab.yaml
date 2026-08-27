@@ -63,8 +63,8 @@ spec:
           mysql -uroot -prootpassword <<'EOF'
 
           CREATE DATABASE IF NOT EXISTS testdb;
-          CREATE USER 'tester'@'%' IDENTIFIED BY '12345678';
-          GRANT All PRIVILEGES ON testdb.* TO 'tester'@'%';
+          CREATE USER `tester`@`%` IDENTIFIED BY `12345678`;
+          GRANT All PRIVILEGES ON testdb.* TO `tester`@`%`;
           FLUSH PRIVILEGES;
           USE testdb;
 
