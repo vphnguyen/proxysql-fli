@@ -90,11 +90,11 @@ core:
     }
     mysql_servers =
     (
-      { address="mysql1" , port=3306 , hostgroup=10, max_connections=100 },      
+      { address="fli-proxysql-mysqllab-service" , port=3306 , hostgroup=1, max_connections=100 },      
     )
     mysql_users =
     (
-      { username = "myuser", password = "password", default_hostgroup = 10, active = 1 }
+      { username = "root", password = "rootpassword", default_hostgroup = 1, active = 1 }
     )
     mysql_query_rules:
     (
@@ -211,6 +211,7 @@ satellite:
 lab: 
   enabled: true
   rootPassword: "rootpassword"
-  host: "fli-proxysql-mysqllab-service"
+  #host: "fli-proxysql-mysqllab-service"
+  host: "uat-proxysql"
   port: 3306     
   cliReplicas: 3
