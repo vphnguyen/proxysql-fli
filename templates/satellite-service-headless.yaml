@@ -1,7 +1,6 @@
 
 {{- range $env := .Values.satellite.environments }}
-{{- if eq $env.kind "StatefulSet" and eq $env.headlessService false }}
-
+{{- if and (eq $env.kind "StatefulSet") (not $env.headlessService) }}
 ---
 apiVersion: v1
 kind: Service
