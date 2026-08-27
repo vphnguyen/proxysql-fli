@@ -248,6 +248,6 @@ lab:
   rootPassword: "rootpassword"
   cliPassword: "abcdefgh"
   #host: "fli-proxysql-mysqllab-service"
-  host: "proxysql-core"
+  host: "uat-proxysql"
   port: 3306     
   cliReplicas: 3
